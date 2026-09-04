@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="Convert a date & time across any IANA timezone using only the browser's Intl API, plus a meeting-planner timeline showing working-hours overlap. 100% offline.">
+  <title>Timezone Converter — Web Utility Suite</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/base.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar container">
+    <a class="brand" href="https://github.com/kasapdev/web-utility-suite" aria-label="Back to Web Utility Suite">
+      <span class="logo" aria-hidden="true">
+        <!-- globe / clock icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>
+          <path d="M12 8v4l3 2"/>
+        </svg>
+      </span>
+      <span class="col" style="gap:0">
+        <span>Timezone Converter</span>
+        <span class="sub">Web Utility Suite</span>
+      </span>
+    </a>
+    <span class="spacer"></span>
+
+    <span id="statusBadge" class="badge" role="status" aria-live="polite" title="Your detected local timezone">
+      <span class="status-dot" aria-hidden="true"></span><span id="statusText">Detecting…</span>
+    </span>
+
+    <button class="btn btn--icon" data-shortcut-help title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="4" width="20" height="16" rx="2"/>
+        <path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M7 16h10"/>
+      </svg>
+    </button>
+    <button class="btn btn--icon" data-theme-toggle title="Toggle theme" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+  </header>
+
+  <main class="container">
+    <!-- Source panel -->
+    <section class="panel source-panel fade-in" aria-label="Source date, time and timezone">
+      <div class="source-grid">
+        <div class="field">
+          <label for="sourceDate">Date &amp; time</label>
+          <input type="datetime-local" id="sourceDate" aria-label="Source date and time">
+        </div>
+        <div class="field">
+          <label for="sourceZone">Source timezone</label>
+          <input type="text" id="sourceZone" list="tzList" autocomplete="off" spellcheck="false" placeholder="e.g. Europe/Istanbul" aria-label="Source timezone">
+        </div>
+        <div class="field field-actions">
+          <label>&nbsp;</label>
+          <div class="row gap-2">
+            <button id="btnNow" class="btn btn--sm" title="Jump to current date &amp; time (N)">Now</button>
+            <button id="btnUseLocal" class="btn btn--sm" title="Use my local timezone (Ctrl/⌘+L)">My timezone</button>
+          </div>
+        </div>
+      </div>
+      <datalist id="tzList"></datalist>
+      <p id="sourceSummary" class="muted source-summary mono"></p>
+    </section>
+
+    <!-- Target zones manager -->
+    <section class="panel zones-panel rise" aria-label="Target timezones">
+      <div class="pane-head">
+        <h2 class="pane-title">Compare against</h2>
+      </div>
+      <div class="row gap-2 wrap zone-add-row">
+        <input type="text" id="zoneInput" list="tzList" autocomplete="off" spellcheck="false" placeholder="Add a timezone… e.g. Asia/Tokyo" aria-label="Add a timezone">
+        <button id="btnAddZone" class="btn btn--primary btn--sm" title="Add timezone">Add</button>
+      </div>
+      <div id="zoneChips" class="zone-chips" aria-label="Selected timezones"></div>
+    </section>
+
+    <!-- Results grid -->
+    <section class="panel results-panel rise" aria-label="Converted times">
+      <div class="pane-head">
+        <h2 class="pane-title">Converted times</h2>
+        <button id="btnCopySummary" class="btn btn--sm" title="Copy all conversions as text">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy summary
+        </button>
+      </div>
+      <div id="resultsGrid" class="results-grid"></div>
+      <div id="resultsEmpty" class="empty" hidden>
+        <p>Add at least one timezone above to see converted times.</p>
+      </div>
+    </section>
+
+    <!-- Meeting planner timeline -->
+    <section class="panel timeline-panel rise" aria-label="Meeting planner timeline">
+      <div class="pane-head">
+        <h2 class="pane-title">Meeting planner</h2>
+        <div class="row gap-2 center working-hours-picker">
+          <label for="workStart" class="secondary" style="font-size:12.5px">Working hours</label>
+          <select id="workStart" aria-label="Working hours start"></select>
+          <span class="muted">–</span>
+          <select id="workEnd" aria-label="Working hours end"></select>
+        </div>
+      </div>
+      <p class="muted timeline-hint">Highlighted cells fall inside each zone's working hours on the chosen date. Look for a column where every row is lit up.</p>
+      <div id="timelineScroll" class="timeline-scroll">
+        <div id="timelineHeader" class="timeline-header"></div>
+        <div id="timelineRows" class="timeline-rows"></div>
+      </div>
+      <div id="timelineEmpty" class="empty" hidden>
+        <p>Add at least one timezone above to see the meeting planner.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer container">
+    Part of the <a href="https://github.com/kasapdev/web-utility-suite">Web Utility Suite</a> · MIT Licensed
+  </footer>
+
+  <!-- Shortcuts help modal -->
+  <div id="helpBackdrop" class="modal-backdrop" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="row between center" style="margin-bottom:var(--space-4)">
+        <h3 id="helpTitle" style="margin:0">Keyboard shortcuts</h3>
+        <button id="helpClose" class="btn btn--icon btn--ghost" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <table class="shortcut-table">
+        <tbody id="shortcutRows"></tbody>
+      </table>
+      <p class="muted" style="margin:var(--space-4) 0 0;font-size:13px">Tip: <kbd>mod</kbd> means <kbd>Ctrl</kbd> on Windows/Linux and <kbd>⌘</kbd> on macOS.</p>
+    </div>
+  </div>
+
+  <script src="assets/js/core.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+/* =====================================================================
+   Timezone Converter Pro — app.css
+   Extends the shared design system (base.css). Colors derive ONLY from
+   base.css CSS variables so dark + light themes both work.
+   ===================================================================== */
+
+[data-theme="light"] .icon-sun { display: none; }
+.icon-moon { display: none; }
+
+/* ===================== Status badge ===================== */
+#statusBadge .status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--brand-400); flex: none;
+  box-shadow: 0 0 10px var(--brand-400);
+}
+
+/* ===================== Source panel ===================== */
+.source-panel { padding: var(--space-5); }
+.source-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr auto;
+  gap: var(--space-4);
+  align-items: end;
+}
+.field-actions .row { margin-top: 2px; }
+.source-summary { margin: var(--space-3) 0 0; font-size: 13px; }
+
+/* ===================== Zones panel ===================== */
+.zones-panel { margin-top: var(--space-5); padding: var(--space-5); }
+.zone-add-row { margin-top: var(--space-3); }
+.zone-add-row #zoneInput { flex: 1; min-width: 200px; }
+
+.zone-chips {
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+.zone-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 8px 7px 14px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 13px; font-weight: 600; color: var(--text);
+}
+.zone-chip.is-source { background: var(--gradient-brand-soft); border-color: transparent; }
+.zone-chip .zone-chip-remove {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--surface-3); border: none; color: var(--text-secondary);
+  cursor: pointer; flex: none; transition: background var(--dur-1), color var(--dur-1);
+}
+.zone-chip .zone-chip-remove:hover { background: var(--danger-soft); color: var(--danger); }
+.zone-chip .zone-chip-remove svg { width: 12px; height: 12px; }
+
+/* ===================== Results grid ===================== */
+.results-panel, .timeline-panel { margin-top: var(--space-5); padding: var(--space-5); }
+.pane-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-3); margin-bottom: var(--space-4); flex-wrap: wrap;
+}
+.pane-title {
+  margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: var(--text-secondary);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--space-4);
+}
+.result-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: var(--space-4);
+  position: relative;
+}
+.result-card.is-source { border-color: var(--brand-500); box-shadow: 0 0 0 1px var(--brand-500); }
+.result-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-2); }
+.result-zone { font-weight: 700; font-size: 14px; word-break: break-word; }
+.result-zone-abbr { display: block; font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
+.result-time { font-family: var(--font-mono); font-size: clamp(1.2rem, 1rem + .6vw, 1.5rem); font-weight: 700; margin: var(--space-3) 0 2px; letter-spacing: -.01em; }
+.result-date { color: var(--text-secondary); font-size: 13px; }
+.result-offset { margin-top: var(--space-3); }
+.result-card-remove {
+  background: transparent; border: none; color: var(--text-muted);
+  cursor: pointer; padding: 2px; line-height: 0; flex: none;
+}
+.result-card-remove:hover { color: var(--danger); }
+.result-card-remove svg { width: 16px; height: 16px; }
+
+/* ===================== Meeting planner timeline ===================== */
+.timeline-hint { font-size: 13px; margin: 0 0 var(--space-4); }
+.working-hours-picker select { width: auto; min-width: 76px; padding: 6px 30px 6px 10px; font-size: 13px; }
+
+.timeline-scroll { overflow-x: auto; }
+.timeline-header, .timeline-row {
+  display: grid;
+  grid-template-columns: 160px repeat(24, minmax(30px, 1fr));
+  gap: 2px;
+  min-width: 900px;
+}
+.timeline-header { margin-bottom: var(--space-2); }
+.timeline-header .tl-label { font-size: 11px; color: var(--text-muted); }
+.timeline-header .tl-hour {
+  text-align: center; font-size: 10.5px; color: var(--text-muted); font-family: var(--font-mono);
+}
+.timeline-rows { display: flex; flex-direction: column; gap: 6px; }
+.timeline-row-zone {
+  display: flex; flex-direction: column; justify-content: center;
+  font-size: 12.5px; font-weight: 600; padding-right: var(--space-3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.timeline-row-zone .tl-zone-offset { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+.tl-cell {
+  height: 30px; border-radius: 6px;
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--text-muted);
+  transition: background var(--dur-1), color var(--dur-1);
+}
+.tl-cell.is-working { background: var(--success-soft); color: var(--success); font-weight: 700; }
+.tl-cell.is-now { outline: 2px solid var(--brand-500); outline-offset: -2px; }
+
+/* ===================== Responsive ===================== */
+@media (max-width: 860px) {
+  .source-grid { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  #statusBadge { display: none; }
+  .pane-head { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 460px) {
+  .zone-add-row { flex-direction: column; align-items: stretch; }
+  .results-grid { grid-template-columns: 1fr; }
+}
