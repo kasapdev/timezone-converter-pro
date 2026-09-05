@@ -1,6 +1,6 @@
 # Timezone Converter Pro
 
-[![CI](https://github.com/kasapdev/timezone-converter-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/kasapdev/timezone-converter-pro/actions/workflows/ci.yml)
+[![CI](https://github.com/kasapdev/timezone-converter-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/kasapdev/timezone-converter-pro/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) ![Vanilla JS](https://img.shields.io/badge/Vanilla-JS-F7DF1E?logo=javascript&logoColor=black)
 
 Convert a date & time across any IANA timezone and find a meeting slot everyone can make — fast, private, and fully offline.
 
