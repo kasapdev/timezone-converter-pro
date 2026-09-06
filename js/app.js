@@ -376,9 +376,12 @@
      ACTIONS
      ================================================================= */
   function jumpToNow() {
-    var d = new Date();
-    var pad = function (n) { return String(n).padStart(2, '0'); };
-    sourceDate.value = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    // Show "now" as wall-clock time *in the currently selected source zone*,
+    // not the browser's local zone — otherwise, whenever the source zone
+    // differs from the visitor's own timezone, this jumps to the wrong
+    // instant (off by the difference between the two zones' UTC offsets).
+    var p = partsInZone(Date.now(), currentSourceZone());
+    sourceDate.value = p.year + '-' + p.month + '-' + p.day + 'T' + p.hour + ':' + p.minute;
     persist();
     render();
   }
